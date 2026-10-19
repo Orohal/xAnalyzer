@@ -64,4 +64,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: Orohal/xAnalyzer
           RELEASE_TAG: ${{ github.event.release.tag_name }}
-        run: gh release upload "$RELEASE_TAG" dist/xAnalyzer-x86.zip dist/xAnalyzer-x64.zip --clobber
+        run: gh release upload "$RELEASE_TAG" dist/xAnalyzer-x86.zip dist/xAnalyzer-x64.zip --clobber --repo Orohal/xAnalyzer
