@@ -5,7 +5,7 @@ on:
   pull_request:
   workflow_dispatch:
   release:
-    types: [published]
+    types: [published, edited]
 
 permissions:
   contents: read
@@ -62,5 +62,6 @@ jobs:
       - name: Attach release archives
         env:
           GH_TOKEN: ${{ github.token }}
+          GH_REPO: Orohal/xAnalyzer
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: gh release upload "$RELEASE_TAG" dist/xAnalyzer-x86.zip dist/xAnalyzer-x64.zip --clobber
