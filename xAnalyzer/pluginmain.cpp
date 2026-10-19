@@ -7,7 +7,7 @@ const char *szprojectnameInfo = "\n" PLUGIN_NAME " " PLUGIN_VERSION_STR
 								"Extended analysis for static code\n"
 								"-> For latest release, issues, etc....\n"
 								"-> For help type command \"xanal help\"\n"
-								"-> code: http://github.com/ThunderCls/xAnalyzer\n"
+								"-> code: https://github.com/Orohal/xAnalyzer\n"
 								"-> blog: http://reversec0de.wordpress.com\n\n";
 
 int pluginHandle;

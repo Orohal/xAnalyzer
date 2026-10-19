@@ -1,26 +1,24 @@
 #ifndef INI_H
 #define INI_H
 
-#include <string>       
-#include <Windows.h>
-using namespace std;
+#include <string>
 
 class IniManager
 {
 public:
-	IniManager(string szFileName);
+	IniManager(const std::string& fileName);
 
-	int ReadInteger(char* szSection, char* szKey, int iDefaultValue);
-	double ReadDouble(char* szSection, char* szKey, float fltDefaultValue);
-	bool ReadBoolean(char* szSection, char* szKey, bool bolDefaultValue);
-	string ReadString(char* szSection, char* szKey, const char* szDefaultValue);
+	int ReadInteger(const char* section, const char* key, int defaultValue);
+	double ReadDouble(const char* section, const char* key, double defaultValue);
+	bool ReadBoolean(const char* section, const char* key, bool defaultValue);
+	std::string ReadString(const char* section, const char* key, const char* defaultValue);
 
-	void WriteInteger(char* szSection, char* szKey, int iValue);
-	void WriteDouble(char* szSection, char* szKey, double fltValue);
-	void WriteBoolean(char* szSection, char* szKey, bool bolValue);
-	void WriteString(char* szSection, char* szKey, char* szValue);
+	void WriteInteger(const char* section, const char* key, int value);
+	void WriteDouble(const char* section, const char* key, double value);
+	void WriteBoolean(const char* section, const char* key, bool value);
+	void WriteString(const char* section, const char* key, const char* value);
 private:
-	string m_szFileName;
+	std::string m_fileName;
 };
 
-#endif//INI_H
+#endif // INI_H

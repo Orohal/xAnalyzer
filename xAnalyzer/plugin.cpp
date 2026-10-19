@@ -125,7 +125,7 @@ PLUG_EXPORT void CBMENUENTRY(CBTYPE cbType, PLUG_CB_MENUENTRY* info)
  			mbp.lpszCaption = "About...";
  			mbp.lpszText = "[" PLUGIN_NAME " " PLUGIN_VERSION_STR"]\n"
  							"Extended analysis for static code \n\n"
- 							"http://github.com/ThunderCls/xAnalyzer\n"
+							"https://github.com/Orohal/xAnalyzer\n"
  							"Coded By : ThunderCls - 2019\n"
  							"Based on: APIInfo Plugin by mrfearless";
  			mbp.dwStyle = MB_USERICON | MB_OK;

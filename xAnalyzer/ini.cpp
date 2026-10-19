@@ -1,69 +1,67 @@
 #include "ini.h"
-#include <iostream>
-#include <Windows.h> 
+#include <Windows.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
 
-IniManager::IniManager(string szFileName)
+IniManager::IniManager(const std::string& fileName)
 {
-	m_szFileName = szFileName;
+	m_fileName = fileName;
 }
 
-int IniManager::ReadInteger(char* szSection, char* szKey, int iDefaultValue)
+int IniManager::ReadInteger(const char* section, const char* key, int defaultValue)
 {
-	int iResult = GetPrivateProfileInt(szSection, szKey, iDefaultValue, m_szFileName.c_str());
-	return iResult;
+	return static_cast<int>(GetPrivateProfileIntA(section, key, defaultValue, m_fileName.c_str()));
 }
 
-double IniManager::ReadDouble(char* szSection, char* szKey, float fltDefaultValue)
+double IniManager::ReadDouble(const char* section, const char* key, double defaultValue)
 {
-	char szResult[MAX_PATH] = "";
-	char szDefault[MAX_PATH] = "";
+	char result[MAX_PATH] = "";
+	char defaultString[MAX_PATH] = "";
 
-	sprintf_s(szDefault, "%f", fltDefaultValue);
-	GetPrivateProfileString(szSection, szKey, szDefault, szResult, MAX_PATH, m_szFileName.c_str());
-	return atof(szResult);
-
+	sprintf_s(defaultString, sizeof(defaultString), "%f", defaultValue);
+	GetPrivateProfileStringA(section, key, defaultString, result, MAX_PATH, m_fileName.c_str());
+	return std::atof(result);
 }
 
-bool IniManager::ReadBoolean(char* szSection, char* szKey, bool bolDefaultValue)
+bool IniManager::ReadBoolean(const char* section, const char* key, bool defaultValue)
 {
-	char szResult[10];
-	char szDefault[10];
+	char result[10] = "";
+	const char* defaultString = defaultValue ? "true" : "false";
 
-	sprintf_s(szDefault, "%s", bolDefaultValue ? "true" : "false");
-	GetPrivateProfileString(szSection, szKey, szDefault, szResult, 10, m_szFileName.c_str());
-
-	return (strcmp(szResult, "true") == 0);
+	GetPrivateProfileStringA(
+		section, key, defaultString, result, static_cast<DWORD>(sizeof(result)), m_fileName.c_str());
+	return std::strcmp(result, "true") == 0;
 }
 
-std::string IniManager::ReadString(char* szSection, char* szKey, const char* szDefaultValue)
+std::string IniManager::ReadString(const char* section, const char* key, const char* defaultValue)
 {
-	std::string szResult;
-	GetPrivateProfileString((LPCSTR)szSection, (LPCSTR)szKey, (LPCSTR)szDefaultValue, (LPSTR)szResult.c_str(), 255, (LPCSTR)m_szFileName.c_str());
-	return szResult;
+	char result[32768] = "";
+	const DWORD length = GetPrivateProfileStringA(
+		section, key, defaultValue, result, static_cast<DWORD>(sizeof(result)), m_fileName.c_str());
+	return std::string(result, length);
 }
 
-void IniManager::WriteInteger(char* szSection, char* szKey, int iValue)
+void IniManager::WriteInteger(const char* section, const char* key, int value)
 {
-	char szValue[MAX_PATH] = "";
-	sprintf_s(szValue, "%d", iValue);
-	WritePrivateProfileString(szSection, szKey, szValue, m_szFileName.c_str());
+	char stringValue[MAX_PATH] = "";
+	sprintf_s(stringValue, sizeof(stringValue), "%d", value);
+	WritePrivateProfileStringA(section, key, stringValue, m_fileName.c_str());
 }
 
-void IniManager::WriteDouble(char* szSection, char* szKey, double fltValue)
+void IniManager::WriteDouble(const char* section, const char* key, double value)
 {
-	char szValue[MAX_PATH] = "";
-	sprintf_s(szValue, "%lf", fltValue);
-	WritePrivateProfileString(szSection, szKey, szValue, m_szFileName.c_str());
+	char stringValue[MAX_PATH] = "";
+	sprintf_s(stringValue, sizeof(stringValue), "%lf", value);
+	WritePrivateProfileStringA(section, key, stringValue, m_fileName.c_str());
 }
 
-void IniManager::WriteBoolean(char* szSection, char* szKey, bool bolValue)
+void IniManager::WriteBoolean(const char* section, const char* key, bool value)
 {
-	char szValue[MAX_PATH] = "";
-	sprintf_s(szValue, "%s", bolValue ? "true" : "false");
-	WritePrivateProfileString(szSection, szKey, szValue, m_szFileName.c_str());
+	WritePrivateProfileStringA(section, key, value ? "true" : "false", m_fileName.c_str());
 }
 
-void IniManager::WriteString(char* szSection, char* szKey, char* szValue)
+void IniManager::WriteString(const char* section, const char* key, const char* value)
 {
-	WritePrivateProfileString(szSection, szKey, szValue, m_szFileName.c_str());
+	WritePrivateProfileStringA(section, key, value, m_fileName.c_str());
 }

@@ -1,0 +1,66 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: microsoft/setup-msbuild@v2
+
+      - name: Build x86 plugin
+        run: msbuild xAnalyzer.sln /m /t:Build /p:Configuration=Release /p:Platform=Win32
+
+      - name: Build x64 plugin
+        run: msbuild xAnalyzer.sln /m /t:Build /p:Configuration=Release /p:Platform=x64
+
+      - name: Package x86 and x64 releases
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path release\x86\apis_def, release\x64\apis_def -Force | Out-Null
+          Copy-Item bin\x32\xAnalyzer.dp32 release\x86\
+          Copy-Item bin\x64\xAnalyzer.dp64 release\x64\
+          Copy-Item apis_def\* release\x86\apis_def\ -Recurse -Force
+          Copy-Item apis_def\* release\x64\apis_def\ -Recurse -Force
+          Compress-Archive -Path release\x86\* -DestinationPath xAnalyzer-x86.zip -Force
+          Compress-Archive -Path release\x64\* -DestinationPath xAnalyzer-x64.zip -Force
+
+      - name: Upload plugins and API definitions
+        uses: actions/upload-artifact@v4
+        with:
+          name: xAnalyzer-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            bin/x32/xAnalyzer.dp32
+            bin/x64/xAnalyzer.dp64
+            apis_def/
+            xAnalyzer-x86.zip
+            xAnalyzer-x64.zip
+          if-no-files-found: error
+
+  publish:
+    if: github.event_name == 'release' && github.event.action == 'published'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: xAnalyzer-${{ github.run_id }}-${{ github.run_attempt }}
+          path: dist
+
+      - name: Attach release archives
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: gh release upload "$RELEASE_TAG" dist/xAnalyzer-x86.zip dist/xAnalyzer-x64.zip --clobber
