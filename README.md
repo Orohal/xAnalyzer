@@ -177,6 +177,9 @@ If you find that a certain API call definition is not being detected or not dete
 
 ## Version History
 
+***xAnalyzer 2.5.5***<br/>
+*- Updated the build and release workflow for Visual Studio 2022*<br/>
+
 ***xAnalyzer 2.5.4***<br/>
 *- Updated project to VS2017*<br/>
 *- Fixed issues when processing argument instructions involving the stack pointer (x64 version).*<br/>
